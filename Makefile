@@ -20,7 +20,7 @@ endif
 
 SRCS=main.cpp util.cpp options.cpp
 OBJS=$(patsubst %.cpp,${GCC_BUILD_DIR}/%.o,${SRCS})
-PREFIX=li
+PREFIX=srt_ed
 GCC_TARGET=${GCC_BUILD_DIR}/${PREFIX}${EXEXT}
 
 FLAGS    += -Wall -W -pedantic -Winvalid-pch -fPIC -fPIE -fstack-protector-strong 
