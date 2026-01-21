@@ -14,6 +14,7 @@
 // clang-format off
 #include "options.h"
 #include "util.h"
+#include "fs.h"
 // clang-format on
 
 std::map<std::string, std::string> sym_table;
@@ -153,12 +154,47 @@ void listvar() {
   );
 }
 
+std::vector<std::string> split_args(std::string args)
+{
+  std::vector<std::string> argv;
+
+  for (size_t i=0; i < args.size(); i++) {
+    char c=args[i];
+
+    if (c == ' ') continue;
+    if (c == '"') {
+      std::string pn="";
+      while (args[++i] && args[i] != '"') {
+        pn+=args[i];
+      }
+      argv.push_back(pn);
+    } else {
+      std::string pn="";
+      while (args[i] && args[i] != ' ') {
+        pn+=args[i++];
+      }
+      argv.push_back(pn);
+    }
+  }
+
+  return argv;
+}
+
 std::string read(std::string args)
 {
+  std::vector<std::string> argv=split_args(args);
+  if (argv.size() < 1) return "At least one parameter is missing.";
+  auto s=fread_txt(argv[0]);
 
-  std::cout << args << std::endl;
-
-  return args;
+  if (argv.size() > 1) {
+    if (is_varname(argv[1]))
+      sym_table[argv[1]] = s;
+    else
+      std::cerr << "Not a correct var name '" << argv[1] << "'" << std::endl;
+    return "";
+  } else {
+    return s;
+  }
 }
 
 // The main function
@@ -175,7 +211,7 @@ int main(int argc, char **argv, char **)
                     "Echo the provided parameter(s) and add a carriage return. Variable names must start with '$' or be formed as follow:'${var_name}'. And they are expanded to their value", optional, interp),
                 option_info('w', "print", [](s_opt_params &p) -> void { std::cout << expand(p.val) << std::flush; }, "Same as 'println' without adding a carriage return.", optional, interp),
                 option_info('l', "list", [](s_opt_params &) -> void { listvar(); }, "List all the variable that are within the symbol table.", no_arg),
-                option_info('f', "read", [](s_opt_params &p) -> void { read(p.val); }, "Read file with path provided as first parameter and put its content into var provided as second parameter.", required),
+                option_info('f', "read", [](s_opt_params &p) -> void { std::cout << read(p.val) << std::flush; }, "Read file with path provided as first parameter and put its content into var provided as second parameter or to stdout if no second parameter.", required),
                 option_info('x', "exit", [](s_opt_params &) -> void { exit(0); }, "Exit from interpreted mode.", no_arg, interp),
                 option_info('q', "quit", [](s_opt_params &) -> void { exit(0); }, "Alias for exit.", no_arg, interp),
             });
