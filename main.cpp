@@ -153,8 +153,14 @@ void listvar() {
   );
 }
 
+std::string read(std::string args)
+{
 
-#ifndef TOTO
+  std::cout << args << std::endl;
+
+  return args;
+}
+
 // The main function
 int main(int argc, char **argv, char **)
 {
@@ -169,6 +175,7 @@ int main(int argc, char **argv, char **)
                     "Echo the provided parameter(s) and add a carriage return. Variable names must start with '$' or be formed as follow:'${var_name}'. And they are expanded to their value", optional, interp),
                 option_info('w', "print", [](s_opt_params &p) -> void { std::cout << expand(p.val) << std::flush; }, "Same as 'println' without adding a carriage return.", optional, interp),
                 option_info('l', "list", [](s_opt_params &) -> void { listvar(); }, "List all the variable that are within the symbol table.", no_arg),
+                option_info('f', "read", [](s_opt_params &p) -> void { read(p.val); }, "Read file with path provided as first parameter and put its content into var provided as second parameter.", required),
                 option_info('x', "exit", [](s_opt_params &) -> void { exit(0); }, "Exit from interpreted mode.", no_arg, interp),
                 option_info('q', "quit", [](s_opt_params &) -> void { exit(0); }, "Alias for exit.", no_arg, interp),
             });
@@ -179,7 +186,6 @@ int main(int argc, char **argv, char **)
   if (myopt.args.empty())
   {
     myopt.parse(std::cin);
-    //for (std::string line; std::getline(std::cin, line);) { std::cout << "Parsing: " << line << std::endl; myopt.parse(line); }
   }
   // else run all the provided file(s)
   else
@@ -188,30 +194,4 @@ int main(int argc, char **argv, char **)
 
   return 0;
 }
-#else
-#include <iostream>
-#include <future>
-#include <thread>
-#include <chrono>
 
-static std::string getAnswer()
-{    
-    std::string answer;
-    std::cin >> answer;
-    return answer;
-}
-
-int main()
-{
-
-    std::chrono::seconds timeout(5);
-    std::cout << "Do you even lift?" << std::endl << std::flush;
-    std::string answer = "maybe"; //default to maybe
-    std::future<std::string> future = std::async(getAnswer);
-    if (future.wait_for(timeout) == std::future_status::ready)
-        answer = future.get();
-
-    std::cout << "the answer was: " << answer << std::endl;
-    exit(0);
-}
-#endif

@@ -210,10 +210,14 @@
   <ItemGroup>
     <ClInclude Include="options.h" />
     <ClInclude Include="util.h" />
+    <ClInclude Include="is_utf8.h" />
+    <ClInclude Include="fs.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="options.cpp" />
     <ClCompile Include="util.cpp" />
+    <ClCompile Include="is_utf8.cpp" />
+    <ClCompile Include="fs.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

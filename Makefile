@@ -18,12 +18,13 @@ else
 	GCC_BUILD_DIR=build/gcc/${OS}
 endif
 
-SRCS=main.cpp util.cpp options.cpp
+SRCS=main.cpp fs.cpp is_utf8.cpp util.cpp options.cpp
 OBJS=$(patsubst %.cpp,${GCC_BUILD_DIR}/%.o,${SRCS})
 PREFIX=srt_ed
 GCC_TARGET=${GCC_BUILD_DIR}/${PREFIX}${EXEXT}
 
-FLAGS    += -Wall -W -pedantic -Winvalid-pch -fPIC -fPIE -fstack-protector-strong 
+FLAGS    += -Wall -W -pedantic -Winvalid-pch
+FLAGS    += -fPIC -fPIE -fstack-protector-strong
 # -O3 option has a really positive impact on the generated binary performance
 FLAGS    += -O3 -ffast-math -march=native -g
 CXXFLAGS += $(FLAGS) -std=c++23
